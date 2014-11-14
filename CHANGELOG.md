@@ -1,6 +1,6 @@
 # 0.1.0
 
-Initial release of role_load_balancer
+Initial release of role_proxy
 
 * Enhancements
   * an enhancement
