@@ -24,7 +24,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       chef.json = {
       }
       chef.run_list = [
-        "recipe[varnish]"
+        "recipe[role_proxy]"
       ]
     end
   end
