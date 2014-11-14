@@ -1,0 +1,19 @@
+# Varnish attributes.
+default['varnish']['listen_port']     = 6000
+default['varnish']['listen_address']  = "127.0.0.1"
+default['varnish']['vcl_conf']        = "default.vcl"
+default['varnish']['vcl_source']      = "varnish_default.vcl.erb"
+default['varnish']['vcl_cookbook']    = "role_proxy"
+default['varnish']['conf_source']     = "varnish_default.erb"
+default['varnish']['conf_cookbook']   = "role_proxy"
+default['varnish']['storage_size']    = "2GB"
+default['varnish']['ttl']             = "600"
+default['varnish']['storage']         = "malloc"
+
+# Backends list.
+default['varnish']['backends']['backend_1']['name'] = "backend1"
+default['varnish']['backends']['backend_1']['host'] = "backend1.staging"
+default['varnish']['backends']['backend_1']['port'] = "80"
+default['varnish']['backends']['backend_2']['name'] = "backend2"
+default['varnish']['backends']['backend_2']['host'] = "backend2.staging"
+default['varnish']['backends']['backend_2']['port'] = "81"

@@ -1,0 +1,10 @@
+<%- if node['varnish']['version'] == '4.0' %>
+vcl 4.0;
+<%- end %>
+<% node['varnish']['backends'].each do |backend_id, backend| %> 
+  backend <%= backend['name'] %> {
+          .host = "<%= backend['host'] %>";
+          .port = "<%= backend['port'] %>";
+  }
+<% end %>
+
