@@ -13,7 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.define 'lb', primary: true do |app|
-    app.vm.hostname = "load-balancer.vagrant.desarrollo.unlp.edu.ar"
+    app.vm.hostname = "proxy.vagrant.desarrollo.unlp.edu.ar"
     app.omnibus.chef_version = :latest
     app.vm.box = "cespi/ubuntu-12.04-upgraded"
     app.vm.box_url = "http://desarrollo.unlp.edu.ar/ubuntu-12.04-upgraded.box"
@@ -24,7 +24,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       chef.json = {
       }
       chef.run_list = [
-        "recipe[role_proxy]"
+        "recipe[role_proxy::from_databag]"
       ]
     end
   end

@@ -1,0 +1,28 @@
+{
+  "id": "proxy.vagrant.desarrollo.unlp.edu.ar",
+  "virtual_host": {
+    "unlp": {
+      "main_name": "www.unlp.edu.ar",
+      "server_names": "unlp.edu.ar",
+      "backends": [
+      {
+        "name": "unlp",
+        "host": "www.unlp.edu.ar",
+        "port": "80",
+        "probe": ""
+      }
+      ]
+    },
+    "cespi": {
+      "main_name": "www.cespi.unlp.edu.ar",
+      "server_names": ["cespi.unlp.edu.ar", "cespi.unlp.edu"],
+      "backends": [
+      {
+        "name": "cespi",
+        "host": "www.cespi.unlp.edu.ar",
+        "port": "80"
+      }
+      ]
+    }
+  }
+}

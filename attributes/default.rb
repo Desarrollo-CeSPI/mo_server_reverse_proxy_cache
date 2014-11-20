@@ -1,3 +1,7 @@
+# General attributes.
+default['role_proxy']['id'] = nil # defaults to fqdn
+default['role_proxy']['databag'] = "proxy_servers"
+
 # Varnish attributes.
 default['varnish']['listen_port']     = 6000
 default['varnish']['listen_address']  = "127.0.0.1"
@@ -10,6 +14,7 @@ default['varnish']['storage_size']    = "2GB"
 default['varnish']['ttl']             = "600"
 default['varnish']['storage']         = "malloc"
 
+# Virtual hosts section.
 default['role_proxy']['virtual_host']['unlp']['main_name'] = "www.unlp.edu.ar"    # String
 default['role_proxy']['virtual_host']['unlp']['server_names'] = "unlp.edu.ar"     # Array or string (just domain names, without www).
 default['role_proxy']['virtual_host']['unlp']['template_source'] = nil
