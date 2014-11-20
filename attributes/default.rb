@@ -10,10 +10,8 @@ default['varnish']['storage_size']    = "2GB"
 default['varnish']['ttl']             = "600"
 default['varnish']['storage']         = "malloc"
 
-# Backends list.
-default['varnish']['backends']['backend_1']['name'] = "backend1"
-default['varnish']['backends']['backend_1']['host'] = "backend1.staging"
-default['varnish']['backends']['backend_1']['port'] = "80"
-default['varnish']['backends']['backend_2']['name'] = "backend2"
-default['varnish']['backends']['backend_2']['host'] = "backend2.staging"
-default['varnish']['backends']['backend_2']['port'] = "81"
+default['role_proxy']['virtual_host']['unlp']['main_name'] = "www.unlp.edu.ar"    # String
+default['role_proxy']['virtual_host']['unlp']['server_names'] = "unlp.edu.ar"     # Array or string (just domain names, without www).
+default['role_proxy']['virtual_host']['unlp']['template_source'] = nil
+default['role_proxy']['virtual_host']['unlp']['template_cookbook'] = nil
+default['role_proxy']['virtual_host']['unlp']['backends'] = [{ name: "unlp", host: "www.unlp.edu.ar", port: "80", probe: "" }]

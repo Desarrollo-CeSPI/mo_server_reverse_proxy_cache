@@ -1,10 +1,68 @@
 <%- if node['varnish']['version'] == '4.0' %>
 vcl 4.0;
 <%- end %>
-<% node['varnish']['backends'].each do |backend_id, backend| %> 
-  backend <%= backend['name'] %> {
-          .host = "<%= backend['host'] %>";
-          .port = "<%= backend['port'] %>";
-  }
-<% end %>
 
+include "backend_definitions.vcl";
+
+sub vcl_recv {
+<% if node['role_proxy']['virtual_host'] %>
+  if (! req.http.Host) {
+    return (synth(404, "Need a host header"));
+  }
+  set req.http.Host = regsub(req.http.Host, "^www\.", "");
+  set req.http.Host = regsub(req.http.Host, ":80$", "");
+  <% vhosts = node['role_proxy']['virtual_host'].to_enum %>
+  <% vhost_id, vhost_data = vhosts.next %>
+  <% urls = Array(vhost_data["server_names"]).map do |s|
+        %Q((req.http.host ~ "(?i)^(www.)?#{s}"))
+      end.join(" || ") %>
+  if (<%= urls %>) {
+    set req.http.host = "<%= vhost_data["main_name"] %>";
+    <% if vhost_data["template_source"] %>
+    include "/etc/varnish/<%= vhost_id %>.vcl";
+    <% else %>
+    set req.backend_hint = <%= "#{vhost_id}_dir" %>.backend();
+    <% end %>
+  }
+  <% loop do %>
+    <% vhost_id, vhost_data = vhosts.next %>
+    <% urls = Array(vhost_data["server_names"]).map do |s|
+          %Q((req.http.host ~ "(?i)^(www.)?#{s}"))
+        end.join(" || ") %>
+  elsif (<%= urls %>) {
+    set req.http.host = "<%= vhost_data["main_name"] %>";
+    <% if vhost_data["template_source"] %>
+    include "/etc/varnish/<%= vhost_id %>.vcl";
+    <% else %>
+    set req.backend_hint = <%= "#{vhost_id}_dir" %>.backend();
+    <% end %>
+  }
+  <% end %>
+<% end %>
+  if (req.http.Accept-Encoding) {
+    if (req.url ~ "\.(gif|jpg|jpeg|swf|flv|mp3|mp4|pdf|ico|png|otf|ttf|gz|tgz|bz2)(\?.*|)$") {
+      unset req.http.Accept-Encoding;
+    } elsif (req.http.Accept-Encoding ~ "gzip") {
+      set req.http.Accept-Encoding = "gzip";
+    } elsif (req.http.Accept-Encoding ~ "deflate") {
+      set req.http.Accept-Encoding = "deflate";
+    } else {
+      unset req.http.Accept-Encoding;
+    }
+  }
+  if (req.url ~ "\.(gif|jpg|jpeg|swf|css|js|flv|mp3|mp4|pdf|ico|png|otf|ttf)(\?.*|)$") {
+    unset req.http.cookie;
+    set req.url = regsub(req.url, "\?.*$", "");
+  }
+  if (req.url ~ "\?(utm_(campaign|medium|source|term)|adParams|client|cx|eid|fbid|feed|ref(id|src)?|v(er|iew))=") {
+    set req.url = regsub(req.url, "\?.*$", "");
+  }
+}
+
+sub vcl_deliver {
+  if (obj.hits > 0) {
+    set resp.http.X-Cache = "HIT";
+  } else {
+    set resp.http.X-Cache = "MISS";
+  }
+}
