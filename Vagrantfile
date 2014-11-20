@@ -17,7 +17,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     app.omnibus.chef_version = :latest
     app.vm.box = "cespi/ubuntu-12.04-upgraded"
     app.vm.box_url = "http://desarrollo.unlp.edu.ar/ubuntu-12.04-upgraded.box"
-    app.vm.network :private_network, ip: "10.100.2.2"
+    app.vm.network :private_network, ip: "10.100.8.2"
     app.berkshelf.enabled = true
     app.vm.provision :chef_solo do |chef|
       chef.data_bags_path = './sample/data_bags'
