@@ -21,6 +21,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     app.berkshelf.enabled = true
     app.vm.provision :chef_solo do |chef|
       chef.data_bags_path = './sample/data_bags'
+      chef.environments_path = "sample/environments"
+      chef.environment = "staging"
       chef.json = {
       }
       chef.run_list = [

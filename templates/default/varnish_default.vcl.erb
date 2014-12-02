@@ -5,57 +5,78 @@ import directors;
 
 <% if node['role_proxy']['virtual_host'] %>
   <% node['role_proxy']['virtual_host'].each do |app_id, app| %> 
-    <% app_backends = app['backends'] %>
-    <% app_backends.each do |backend| %>
-backend <%= backend['name'] %> {
-  .host = "<%= backend['host'] %>";
-  .port = "<%= backend['port'] %>";
-      <% if backend['probe'] %>
+    <% app_backends = app['application_servers'] %>
+    <% app_backends.each_with_index do |backend, index| %>
+backend <%= "#{app_id}_#{index}" %> {
+  .host = "<%= backend %>";
+  .port = "<%= app['cache']['port'] || 80 %>";
   .probe = {
-    .url = <%= backend['probe']['url'] || '"/"' %>;
-    .timeout = <%= backend['probe']['timeout'] || "1s" %>;
-    .interval = <%= backend['probe']['interval'] || "5s" %>;
-    .window = <%= backend['probe']['window'] || "5" %>;
-    .threshold = <%= backend['probe']['threshold'] || "3" %>;
+    .url = "<%= app['cache']['probe']['url'] || "/" %>";
+    .timeout = <%= app['cache']['probe']['timeout'] || "1s" %>;
+    .interval = <%= app['cache']['probe']['interval'] || "5s" %>;
+    .window = <%= app['cache']['probe']['window'] || "5" %>;
+    .threshold = <%= app['cache']['probe']['threshold'] || "3" %>;
   }
-      <% end %>
 }
     <% end %>
 sub vcl_init {
-    <% app_dir = "#{app_id}_dir" %>
-    new <%= app_dir %> = directors.round_robin();
-    <% app_backends.each do |backend| %>
-    <%= app_dir %>.add_backend(<%= backend['name'] %>);
-    <% end %>
+  <% app_dir = "#{app_id}_dir" %>
+  new <%= app_dir %> = directors.round_robin();
+  <% app_backends.each_with_index do |backend, index| %>
+  <%= app_dir %>.add_backend(<%= "#{app_id}_#{index}" %>);
+  <% end %>
 }
   <% end %>
 <% end %>
 
 
 acl purge {
-  "localhost";
+<% node['role_proxy']['purge'].each do |host, data| %>
+  <% if data['deny'] %>
+  ! "<%= data['ip'] %>";
+  <% else %>
+  "<%= data['ip'] %>";
+  <% end %>
+<% end %>
 }
+
 
 sub determine_backend {
   <% vhosts = node['role_proxy']['virtual_host'].to_enum %>
   <% vhost_id, vhost_data = vhosts.next %>
-  <% urls = Array(vhost_data["server_names"]).map do |s|
-        %Q((req.http.host ~ "(?i)^(www.)?#{s}"))
+  <% vhost_apps = vhost_data['applications'].to_enum %>
+  <% app_id, app_data = vhost_apps.next %>
+  <% urls = Array(app_data["server_name"]).map do |s|
+        %Q((req.http.host ~ "^#{s}"))
       end.join(" || ") %>
   if (<%= urls %>) {
-    set req.http.host = "<%= vhost_data["main_name"] %>";
+    set req.http.host = "<%= Array(app_data["server_name"]).first %>";
     set req.backend_hint = <%= "#{vhost_id}_dir" %>.backend();
   }
-    <% loop do %>
-      <% vhost_id, vhost_data = vhosts.next %>
-      <% urls = Array(vhost_data["server_names"]).map do |s|
-        %Q((req.http.host ~ "(?i)^(www.)?#{s}"))
+      <% loop do %>
+      <% app_id, app_data = vhost_apps.next %>
+      <% urls = Array(app_data["server_name"]).map do |s|
+        %Q((req.http.host ~ "^#{s}"))
         end.join(" || ") %>
   elsif (<%= urls %>) {
-    set req.http.host = "<%= vhost_data["main_name"] %>";
+    set req.http.host = "<%= Array(app_data["server_name"]).first %>";
     set req.backend_hint = <%= "#{vhost_id}_dir" %>.backend();
-    <% end %>
   }
+      <% end %>
+    <% loop do %>
+      <% vhost_id, vhost_data = vhosts.next %>
+      <% vhost_apps = vhost_data['applications'].to_enum %>
+      <% loop do %>
+      <% app_id, app_data = vhost_apps.next %>
+      <% urls = Array(app_data["server_name"]).map do |s|
+        %Q((req.http.host ~ "^#{s}"))
+        end.join(" || ") %>
+  elsif (<%= urls %>) {
+    set req.http.host = "<%= Array(app_data["server_name"]).first %>";
+    set req.backend_hint = <%= "#{vhost_id}_dir" %>.backend();
+  }
+      <% end %>
+  <% end %>
 }
 
 
@@ -368,7 +389,6 @@ sub vcl_deliver {
 
 sub vcl_purge {
   set req.http.X-Purge = "Yes";
-  return(restart);
 }
 
 sub vcl_synth {

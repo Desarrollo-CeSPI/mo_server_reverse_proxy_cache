@@ -1,0 +1,32 @@
+{
+"id": "alumnos",
+  "staging": {
+    "database": {
+      "password": "alumnos",
+      "host": "db-1.vagrant.desarrollo.unlp.edu.ar"
+    },
+    "application_servers": [
+      "desarrollo.unlp.edu.ar"
+    ],
+    "cache" : {
+      "probe": {
+        "url": "/",
+        "window": 6
+      }
+    },
+    "applications": {
+      "frontend": {
+        "server_name": ["alumnos.vagrant.desarrollo.unlp.edu.ar", "alumnos-nuevo.vagrant.desarrollo.unlp.edu.ar"],
+        "ssl": {
+          "certificate_name": null
+        }
+      },
+      "backend": {
+        "server_name": "admin-alumnos.vagrant.desarrollo.unlp.edu.ar",
+        "ssl": {
+          "certificate_name": null
+        }
+      }
+    }
+  }
+}
