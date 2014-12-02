@@ -1,9 +1,9 @@
-name             'role_proxy'
+name             'mo_server_reverse_proxy_cache'
 maintainer       'Christian A. Rodriguez & Leandro Di Tommaso'
 maintainer_email 'chrodriguez@gmail.com leandro.ditommaso@mikroways.net'
 license          'MIT'
-description      'Installs/Configures role_proxy'
-long_description 'Installs/Configures role_proxy'
+description      'Installs/Configures mo_server_reverse_proxy_cache'
+long_description 'Installs/Configures mo_server_reverse_proxy_cache'
 version          '0.1.0'
 
 depends 'mo_application'

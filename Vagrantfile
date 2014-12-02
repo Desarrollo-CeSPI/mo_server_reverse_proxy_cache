@@ -26,7 +26,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       chef.json = {
       }
       chef.run_list = [
-        "recipe[role_proxy::from_databag]"
+        "recipe[mo_server_reverse_proxy_cache::from_databag]"
       ]
     end
   end

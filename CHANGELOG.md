@@ -1,6 +1,6 @@
 # 0.1.0
 
-Initial release of role_proxy
+Initial release of mo_server_reverse_proxy_cache
 
 * Enhancements
   * an enhancement

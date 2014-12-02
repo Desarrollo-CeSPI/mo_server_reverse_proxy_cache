@@ -1,4 +1,4 @@
-# role_proxy-cookbook
+# mo_server_reverse_proxy_cache-cookbook
 
 TODO: Enter the cookbook description here.
 
@@ -16,7 +16,7 @@ TODO: List your supported platforms.
     <th>Default</th>
   </tr>
   <tr>
-    <td><tt>['role_proxy']['bacon']</tt></td>
+    <td><tt>['mo_server_reverse_proxy_cache']['bacon']</tt></td>
     <td>Boolean</td>
     <td>whether to include bacon</td>
     <td><tt>true</tt></td>
@@ -25,14 +25,14 @@ TODO: List your supported platforms.
 
 ## Usage
 
-### role_proxy::default
+### mo_server_reverse_proxy_cache::default
 
-Include `role_proxy` in your node's `run_list`:
+Include `mo_server_reverse_proxy_cache` in your node's `run_list`:
 
 ```json
 {
   "run_list": [
-    "recipe[role_proxy::default]"
+    "recipe[mo_server_reverse_proxy_cache::default]"
   ]
 }
 ```

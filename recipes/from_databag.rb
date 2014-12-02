@@ -1,11 +1,11 @@
-item_id = node['role_proxy']['id'] || node.fqdn
+item_id = node['mo_server_reverse_proxy_cache']['id'] || node.fqdn
 
-node.set['role_proxy']['virtual_host'] = {}
+node.set['mo_server_reverse_proxy_cache']['virtual_host'] = {}
 
-mo_apps_from_databag(node['role_proxy']['databag'], item_id, node['role_proxy']['applications_databag']) do |name, values|
-  node.set['role_proxy']['virtual_host'][name] = values
+mo_apps_from_databag(node['mo_server_reverse_proxy_cache']['databag'], item_id, node['mo_server_reverse_proxy_cache']['applications_databag']) do |name, values|
+  node.set['mo_server_reverse_proxy_cache']['virtual_host'][name] = values
 end
 
-node.set['role_proxy']['purge'] = data_bag_item(node['role_proxy']['databag'], item_id)['purge']
+node.set['mo_server_reverse_proxy_cache']['purge'] = data_bag_item(node['mo_server_reverse_proxy_cache']['databag'], item_id)['purge']
 
-include_recipe 'role_proxy'
+include_recipe 'mo_server_reverse_proxy_cache'
