@@ -110,6 +110,8 @@ Applications databag.
   hostname will be used to match the request, but the hostname of the requirement will be overwriten to use the first
   value in the array.
 
+Take a look at the sample files to see examples of use.
+
 ## Attributes
 
 Both recipes (default and from_databag) will read attributes, the main difference is that the second one

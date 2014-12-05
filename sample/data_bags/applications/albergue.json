@@ -1,10 +1,6 @@
 {
 "id": "albergue",
   "staging": {
-    "database": {
-      "password": "albergue",
-      "host": "db-1.vagrant.desarrollo.unlp.edu.ar"
-    },
     "application_servers": [
       "desarrollo.unlp.edu.ar"
     ],
