@@ -6,5 +6,5 @@ description      'Installs/Configures mo_server_reverse_proxy_cache'
 long_description 'Installs/Configures mo_server_reverse_proxy_cache'
 version          '0.1.0'
 
-depends 'mo_application'
-depends 'varnish'
+depends 'mo_application', '~>0.1.24'
+depends 'varnish',        '~>1.0.3'
