@@ -1,3 +1,5 @@
+# Reads from databag and sets the corresponding attributes.
+
 item_id = node['mo_server_reverse_proxy_cache']['id'] || node.fqdn
 
 node.set['mo_server_reverse_proxy_cache']['virtual_host'] = {}

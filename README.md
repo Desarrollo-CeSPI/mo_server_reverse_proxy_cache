@@ -1,7 +1,7 @@
 # mo_server_reverse_proxy_cache-cookbook
 
 This cookbook provides recipes to configure a server with Nginx and Varnish to be used
-as a reverse proxy and a fast cache for high load websites.
+as a reverse proxy, SSL endpoint and a fast cache for high load websites.
 
 ## Supported Platforms
 
@@ -9,10 +9,15 @@ Tested on Ubuntu 12.04, should work in 14.04.
 
 ## Recipes
 
-This cookbook provides two recipes:
+This cookbook provides three recipes:
 
-* default: this recipe can be used just by setting the appropiate attributes.
-* from_databag: this recipe uses data bags to configure the server.
+* **default**: this recipe can be used just by setting the appropiate attributes.
+* **from_databag**: this recipe uses data bags to configure the server.
+* **nginx**: sets up Nginx as a reverse proxy with SSL support when required.
+
+### default
+
+Installs Varnish using just attributes.
 
 ### from_databag
 
@@ -23,6 +28,9 @@ This recipe uses two databags defined in the following attributes:
 
 The first attribute is the databag where the applications that will be proxied are listed.
 The second one indicates the databag where each of those applications are defined.
+
+Note that when using this recipe, values in databag are copied to node attributes and read
+directly from there, in order to simplify the implementation of both ways to use the cookbook.
 
 #### Examples
 
@@ -53,10 +61,10 @@ Main databag.
 }
 ```
 
-* id: name of the server (as specified in node['mo_server_reverse_proxy_cache']['id']). If the attribute
+* **id**: name of the server (as specified in node['mo_server_reverse_proxy_cache']['id']). If the attribute
   is nil, FQDN is used instead.
-* applications: an array with each application that will be proxied by the server with the corresponding id.
-* purge: a hash that will form the ACL to permit or deny purge.
+* **applications**: an array with each application that will be proxied by the server with the corresponding id.
+* **purge**: a hash that will form the ACL to permit or deny purge.
 
 Applications databag.
 
@@ -79,15 +87,17 @@ Applications databag.
     },
     "applications": {
       "frontend": {
+        "listen": ["80", "443 ssl"],
         "server_name": "albergue.vagrant.desarrollo.unlp.edu.ar",
         "ssl": {
-          "certificate_name": null
+          "enabled": false
         }
       },
       "backend": {
         "server_name": "admin-albergue.vagrant.desarrollo.unlp.edu.ar",
         "ssl": {
-          "certificate_name": null
+          "enabled": true
+          "certificate_id": albergue
         }
       }
     }
@@ -95,22 +105,45 @@ Applications databag.
 }
 ```
 
-* id: the application identifier. This name is the one that goes in the list of applications proxied by the server.
-* staging: the environment in which the values are valid. The recipe **from_databag** automatically uses the values
+* **id**: the application identifier. This name is the one that goes in the list of applications proxied by the server.
+* **staging**: the environment in which the values are valid. The recipe **from_databag** automatically uses the values
   that correspond to the environment in which the server is.
-* application_servers: the servers listed here will be the backends.
-* cache: this sections specifies some customizations for Varnish.
-  * port: the port where the backends expect to receive connections from Varnish. Defaults to 80.
-  * probe: how to probe the backends. If ommited default values are applied (backends are always probed). It's
+* **application_servers**: the servers listed here will be the backends.
+* **cache**: this sections specifies some customizations for Varnish.
+  * **port**: the port where the backends expect to receive connections from Varnish. Defaults to 80.
+  * **probe**: how to probe the backends. If ommited default values are applied (backends are always probed). It's
     possible to specify every value or just some of them (the ones not included will get default values).
-* applications: the list of applications for the main application. Some applications have for example a backend and
+* **applications**: the list of applications for the main application. Some applications have for example a backend and
   a frontend. For each of those, an entry in the default VCL will be included to match the hostname. It's important to
   know that every application defined here will use the same backends specified in "application_servers".
-* server_name: could be a string with one hostname or an array with several hostnames. If it is an array, every
+* **listen**: an array with the ports where the application will be available. If using SSL in any port follow the port
+  number with the ssl keyword and shown in the example above.
+* **server_name**: could be a string with one hostname or an array with several hostnames. If it is an array, every
   hostname will be used to match the request, but the hostname of the requirement will be overwriten to use the first
   value in the array.
+* **ssl enabled**: this instructs Nginx to use SSL for that particular application.
+* **certificate_id**: certificate data bag item id to be located by.
 
 Take a look at the sample files to see examples of use.
+
+### nginx
+
+Nginx recipe is optional and is intended to be used in front of Varnish, particularly when SSL will be needed for an
+application. Note that in the case you don't need SSL you could simply omit Nginx and configure Varnish to receive the
+public connections directly.
+
+This recipe reads the following values to set up Nginx and the corresponding virtual hosts. It does this for every
+application in a website (remember that a website could have more than one application, like frontend and backend).
+
+* Varnish listen address and Varnish listen port: these are the attributes that Varnish reads to configure itself and 
+  Nginx uses them to know which is the backend that will be proxied.
+* Listen: the list of ports where Nginx will listen for http and/or https connections.
+* Server name: the list of URLs to match.
+* SSL: ssl configuration section.
+  * Enabled: instructs Nginx to use SSL for this virtual host.
+  * Certificate ID: required when set enabled in true. Is the ID of the certificate, stored in an encripted databag.
+
+Nginx recipe requires default or from_databag recipes to be called before in order to work.
 
 ## Attributes
 
@@ -122,19 +155,23 @@ without databags, the databag structure must be represented. For example, to spe
 node['mo_server_reverse_proxy_cache']['applications'] = ["unlp", "albergue", "alumnos"]
 ```
 
-### Varnish
+## External cookbooks
 
 This cookbook uses [Varnish comunity cookbook](https://github.com/rackspace-cookbooks/varnish) and for that it
 needs to set some attributes defined by that cookbook. For a detailed list and explanation see the README in that cookbook.
 
+Nginx is installed and configured using [Nginx cookbook](https://github.com/miketheman/nginx) and
+[Nginx conf cookbook](https://github.com/firebelly/chef-nginx_conf).
+
 ## Usage
 
-To use this cookbook, you need to define the attributes or databags as indicated above and then add to the node's
-run list either default or from_databag recipe.
+You always need to specify either default or from_databag recipe. Both of them will install Varnish with default values,
+but the second one will require databags to be available.
+
+Besides, you could optionally use nginx recipe as described above.
 
 ## To-Do
 
-* Add Nginx in front with support for SSL.
 * Add tests.
 
 ## License and Authors
