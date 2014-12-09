@@ -1,3 +1,4 @@
+include_recipe 'chef-sugar'
 include_recipe 'nginx'
 
 node['mo_server_reverse_proxy_cache']['virtual_host'].each do |vhost|
@@ -16,7 +17,10 @@ node['mo_server_reverse_proxy_cache']['virtual_host'].each do |vhost|
             'proxy_pass' => "http://#{vhost[0]}_#{app[:name]}"
           }
         })
-      ssl ssl_for(app)
+      if app[:ssl][:enabled]
+        ssl ssl_for(app)
+      end
+      notifies :reload, "service[nginx]"
     end
   end
 end

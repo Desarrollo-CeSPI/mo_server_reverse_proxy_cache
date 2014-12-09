@@ -19,7 +19,8 @@
         "listen": ["80", "443 ssl"],
         "server_name": ["www.unlp.edu.ar", "unlp.edu.ar"],
         "ssl": {
-          "enabled": true
+          "enabled": true,
+          "certificate_id": "unlp"
         }
       }
     }
