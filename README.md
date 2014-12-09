@@ -141,7 +141,7 @@ application in a website (remember that a website could have more than one appli
 * Server name: the list of URLs to match.
 * SSL: ssl configuration section.
   * Enabled: instructs Nginx to use SSL for this virtual host.
-  * Certificate ID: required when set enabled in true. Is the ID of the certificate, stored in an encripted databag.
+  * Certificate ID: required when set enabled in true. Is the ID of the certificate, stored in an encrypted databag.
 
 Nginx recipe requires default or from_databag recipes to be called before in order to work.
 
@@ -169,6 +169,49 @@ You always need to specify either default or from_databag recipe. Both of them w
 but the second one will require databags to be available.
 
 Besides, you could optionally use nginx recipe as described above.
+
+### Vagrant
+
+To work inside Vagrant with SSL and encrypted databags you need two plugins, as explained below.
+
+#### Create the certificates
+
+To create the certificates you could use rake (within the Chef shell).
+
+```
+eval $(chef shell-init bash)
+rake ssl_cert FQDN=www.unlp.edu.ar
+```
+
+#### View or edit encrypted data bags
+
+First of all you will need to install the following gems (inside chefdk
+environment):
+
+* [Knife solo](http://matschaffer.github.io/knife-solo/)
+* [Knife solo data bag](https://github.com/thbishop/knife-solo_data_bag)
+
+Inside `sample/` directory there are some valuable data:
+* `.chef/data_bag_key`: key used to encrypt/decrypt the data bag.
+* `.chef/knife.rb`: knife solo plugin configuration.
+* `certificates/`: directory with the original certificates used in databags. When used in a real
+  environment you will not have the real certificates here.
+* `data_bags/certificates/unlp.json`: encrypted data bag with the certificate and the private key.
+
+To edit encrypted data bag, inside `sample/` directory execute:
+
+```
+knife solo data bag edit certificates unlp --secret-file .chef/data_bag_key 
+```
+
+To save a certificate in a single line:
+
+```
+ruby -e 'p ARGF.read' certificates/unlp.pem
+```
+
+If you move or rename `sample/.chef/data_bag_key` you'll also need to modify the corresponding reference
+in the `Vagrantfile`.
 
 ## To-Do
 
