@@ -114,8 +114,8 @@ Applications databag.
       "backend": {
         "server_name": "admin-albergue.vagrant.desarrollo.unlp.edu.ar",
         "ssl": {
-          "enabled": true
-          "certificate_id": albergue
+          "enabled": true,
+          "certificate_id": "albergue"
         }
       }
     }
