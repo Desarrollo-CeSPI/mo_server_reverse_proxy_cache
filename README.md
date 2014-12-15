@@ -17,7 +17,7 @@ as a reverse proxy, SSL endpoint and a fast cache for high load websites.
   * [Vagrant](#vagrant)
     * [Create the certificates](#create-the-certificates)
     * [View or edit encrypted data bags](#view-or-edit-encrypted-data-bags)
-* [ToDo](#todo)
+* [To-Do](#to-do)
 * [License](#license)
 * [Authors](#authors)
 
