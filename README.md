@@ -1,4 +1,4 @@
-# mo_server_reverse_proxy_cache-cookbook
+# Cookbook: mo_server_reverse_proxy_cache
 
 This cookbook provides recipes to configure a server with Nginx and Varnish to be used
 as a reverse proxy, SSL endpoint and a fast cache for high load websites.
