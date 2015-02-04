@@ -10,6 +10,7 @@ import directors;
 backend <%= "#{app_id}_#{index}" %> {
   .host = "<%= backend %>";
   .port = "<%= app['cache']['port'] || 80 %>";
+  <% if app['cache']['probe'] %>
   .probe = {
     .url = "<%= app['cache']['probe']['url'] || "/" %>";
     .timeout = <%= app['cache']['probe']['timeout'] || "1s" %>;
@@ -17,6 +18,7 @@ backend <%= "#{app_id}_#{index}" %> {
     .window = <%= app['cache']['probe']['window'] || "5" %>;
     .threshold = <%= app['cache']['probe']['threshold'] || "3" %>;
   }
+  <% end %>
 }
     <% end %>
 sub vcl_init {
