@@ -1,6 +1,6 @@
 {
   "id": "proxy.vagrant.desarrollo.unlp.edu.ar",
-  "applications": ["unlp", "albergue", "alumnos"],
+  "applications": ["albergue"],
   "purge": {
     "localhost": {
       "ip": "localhost",

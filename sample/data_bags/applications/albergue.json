@@ -2,27 +2,20 @@
 "id": "albergue",
   "staging": {
     "application_servers": [
-      "desarrollo.unlp.edu.ar"
+      "php-cluster-01.desarrollo.unlp.edu.ar"
     ],
     "cache" : {
-      "port": 80,
-      "probe": {
-        "url": "/",
-        "timeout": "2s",
-        "interval": "6s",
-        "window": 6,
-        "threshold": 2
-      }
+      "port": 80
     },
     "applications": {
       "frontend": {
-        "server_name": "albergue.vagrant.desarrollo.unlp.edu.ar",
+        "server_name": "albergue.cluster.desarrollo.unlp.edu.ar",
         "ssl": {
           "certificate_name": null
         }
       },
       "backend": {
-        "server_name": "admin-albergue.vagrant.desarrollo.unlp.edu.ar",
+        "server_name": "admin-albergue.cluster.desarrollo.unlp.edu.ar",
         "ssl": {
           "certificate_name": null
         }
