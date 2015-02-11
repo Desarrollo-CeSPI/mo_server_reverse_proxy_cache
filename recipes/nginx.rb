@@ -17,7 +17,7 @@ node['mo_server_reverse_proxy_cache']['virtual_host'].each do |vhost|
             'proxy_pass' => "http://#{vhost[0]}_#{app[:name]}"
           }
         })
-      if app[:ssl][:enabled]
+      if app[:ssl]
         ssl ssl_for(app)
       end
       notifies :reload, "service[nginx]"
