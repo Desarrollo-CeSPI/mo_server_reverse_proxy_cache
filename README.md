@@ -107,9 +107,6 @@ Applications databag.
       "frontend": {
         "listen": ["80", "443 ssl"],
         "server_name": "albergue.vagrant.desarrollo.unlp.edu.ar",
-        "ssl": {
-          "enabled": false
-        }
       },
       "backend": {
         "server_name": "admin-albergue.vagrant.desarrollo.unlp.edu.ar",
