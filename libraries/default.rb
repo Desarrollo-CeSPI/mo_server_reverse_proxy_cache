@@ -13,7 +13,7 @@ def applications_for(vhost)
     app[:name] = a[0]
     app[:server_name] = a[1]["server_name"]
     app[:listen] = a[1]["listen"]
-    app[:ssl] = a[1]["ssl"]
+    app[:ssl] = a[1]["proxy_ssl"]
     apps << app
   end
   apps
