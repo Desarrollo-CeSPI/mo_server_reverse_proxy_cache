@@ -9,16 +9,10 @@
     },
     "applications": {
       "frontend": {
-        "server_name": "albergue.cluster.desarrollo.unlp.edu.ar",
-        "ssl": {
-          "certificate_name": null
-        }
+        "server_name": "albergue.cluster.desarrollo.unlp.edu.ar"
       },
       "backend": {
-        "server_name": "admin-albergue.cluster.desarrollo.unlp.edu.ar",
-        "ssl": {
-          "certificate_name": null
-        }
+        "server_name": "admin-albergue.cluster.desarrollo.unlp.edu.ar"
       }
     }
   }

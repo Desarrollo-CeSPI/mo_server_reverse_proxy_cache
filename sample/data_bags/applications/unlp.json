@@ -16,9 +16,8 @@
     },
     "applications": {
       "frontend": {
-        "listen": ["80", "443 ssl"],
         "server_name": ["www.unlp.edu.ar", "unlp.edu.ar"],
-        "ssl": {
+        "proxy_ssl": {
           "enabled": true,
           "certificate_id": "unlp"
         }
