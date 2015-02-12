@@ -4,7 +4,7 @@ maintainer_email 'chrodriguez@gmail.com leandro.ditommaso@mikroways.net'
 license          'MIT'
 description      'Installs/Configures mo_server_reverse_proxy_cache'
 long_description 'Installs/Configures mo_server_reverse_proxy_cache'
-version          '0.1.3'
+version          '0.1.4'
 
 depends   'certificate',      '~>0.6.3'
 depends   'chef-sugar',       '~>2.4.1'
